@@ -18,8 +18,8 @@ class AddWorkplaceToStaff(QWidget):
 
         self.ui.cmb_staff_branch.currentTextChanged.connect(self.staff_loader)
 
-        self.ui.cmb_department.currentTextChanged.connect(lambda: self.ui.lw_staff_day.setCurrentItem(None))
-        self.ui.cmb_neighborhood.currentTextChanged.connect(lambda: self.ui.lw_staff_day.setCurrentItem(None))
+        self.ui.cmb_department.currentTextChanged.connect(self.suitable_wp_loader)
+        self.ui.cmb_neighborhood.currentTextChanged.connect(self.suitable_wp_loader)
 
         self.ui.lw_staff.currentRowChanged.connect(self.staff_day_loader)
         self.ui.lw_staff_day.currentRowChanged.connect(self.suitable_wp_loader)
@@ -92,7 +92,6 @@ class AddWorkplaceToStaff(QWidget):
             workplaces = self.connection.selector(f"""SELECT name FROM workplaces WHERE staffID = "{staff_id}" """)
             self.ui.lw_assigned_wp.addItems(get_list_general(workplaces))
 
-    # Burada text üzerinde oynama yapılabilir
     def suitable_wp_loader(self):
         self.ui.lw_appropriate_wp.clear()
         staff_item = self.ui.lw_staff.currentItem()
@@ -101,63 +100,57 @@ class AddWorkplaceToStaff(QWidget):
         neighborhood_name = self.ui.cmb_neighborhood.currentText()
 
         if department_name == "Hepsi" and neighborhood_name == "Hepsi" and staff_item is not None and staff_day_item is not None:
-            # burada sınıfı olmayanlardan ötürü hata alıyoruz ve bunu sql ile halledilimek gerekiyor.
-            pass
-            # data = self.connection.selector(f"""SELECT workplaces.name, students.id_number, days.name FROM history
-            #                                 JOIN workplaces ON workplaces.id = history.workplaceID
-            #                                 JOIN students ON students.id_number = history.studentID
-            #                                 JOIN classes_days ON students.classID = classes_days.classID
-            #                                 JOIN days ON days.id = classes_days.dayID
-            #                                 WHERE workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL""")
-            # appropriate_wp = self.intersection_day(data, staff_day_item.text())
-            # self.ui.lw_appropriate_wp.addItems(appropriate_wp)
+            staff_day_id = self.connection.find(f"""SELECT id FROM days WHERE name = "{staff_day_item.text()}" """)
+            data = self.connection.selector(f"""SELECT workplaces.name, history.studentID FROM history JOIN workplaces ON workplaces.id = history.workplaceID
+            WHERE workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL""")
+            self.settle(staff_day_id, data)
 
-        # elif department_name == "Hepsi" and neighborhood_name != "Hepsi" and staff_item is not None and staff_day_item is not None:
-        #     neighborhood_id = self.connection.find(f"""SELECT id FROM neighborhoods WHERE name = "{neighborhood_name}" """)
-        #     data = self.connection.selector(f"""SELECT workplaces.name, students.id_number, days.name FROM history
-        #                                                 JOIN workplaces ON workplaces.id = history.workplaceID
-        #                                                 JOIN neighborhoods ON workplaces.neighborhoodID = neighborhoods.id
-        #                                                 JOIN students ON students.id_number = history.studentID
-        #                                                 JOIN classes_days ON students.classID = classes_days.classID
-        #                                                 JOIN days ON days.id = classes_days.dayID
-        #                                                 WHERE workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL
-        #                                                 AND workplaces.neighborhoodID = {neighborhood_id}""")
-        #     appropriate_wp = self.intersection_day(data, staff_day_item.text())
-        #     self.ui.lw_appropriate_wp.addItems(appropriate_wp)
-        # elif department_name != "Hepsi" and neighborhood_name == "Hepsi" and staff_item is not None and staff_day_item is not None:
-        #     department_id = self.connection.find(f"""SELECT id FROM departments WHERE name = "{department_name}" """)
-        #     data = self.connection.selector(f"""SELECT workplaces.name, students.id_number, days.name FROM history
-        #                                     JOIN workplaces ON workplaces.id = history.workplaceID
-        #                                     JOIN students ON students.id_number = history.studentID
-        #                                     JOIN classes_days ON students.classID = classes_days.classID
-        #                                     JOIN days ON days.id = classes_days.dayID
-        #                                     WHERE workplaces.staffID IS NULL
-        #                                     AND workplaces.dayID IS NULL
-        #                                     AND history.leaving_date IS NULL
-        #                                     AND workplaces.departmentID = {department_id}
-        #                                     """)
-        #     appropriate_wp = self.intersection_day(data, staff_day_item.text())
-        #     self.ui.lw_appropriate_wp.addItems(appropriate_wp)
-        # elif department_name != "Hepsi" and neighborhood_name != "Hepsi" and staff_item is not None and staff_day_item is not None:
-        #     neighborhood_id = self.connection.find(f"""SELECT id FROM neighborhoods WHERE name = "{neighborhood_name}" """)
-        #     department_id = self.connection.find(f"""SELECT id FROM departments WHERE name = "{department_name}" """)
-        #     data = self.connection.selector(f"""SELECT workplaces.name, students.id_number, days.name FROM history
-        #                                                                         JOIN workplaces ON workplaces.id = history.workplaceID
-        #                                                                         JOIN neighborhoods ON workplaces.neighborhoodID = neighborhoods.id
-        #                                                                         JOIN departments ON workplaces.departmentID = departments.id
-        #                                                                         JOIN students ON students.id_number = history.studentID
-        #                                                                         JOIN classes_days ON students.classID = classes_days.classID
-        #                                                                         JOIN days ON days.id = classes_days.dayID
-        #                                                                         WHERE workplaces.staffID IS NULL
-        #                                                                         AND workplaces.dayID IS NULL
-        #                                                                         AND history.leaving_date IS NULL
-        #                                                                         AND workplaces.neighborhoodID = {neighborhood_id}
-        #                                                                         AND workplaces.departmentID = {department_id}
-        #                                                                         """)
-        #     appropriate_wp = self.intersection_day(data, staff_day_item.text())
-        #     self.ui.lw_appropriate_wp.addItems(appropriate_wp)
-        else:
-            pass
+        elif department_name == "Hepsi" and neighborhood_name != "Hepsi" and staff_item is not None and staff_day_item is not None:
+            neighborhood_id = self.connection.find(f"""SELECT id FROM neighborhoods WHERE name = "{self.ui.cmb_neighborhood.currentText()}" """)
+            staff_day_id = self.connection.find(f"""SELECT id FROM days WHERE name = "{staff_day_item.text()}" """)
+            data = self.connection.selector(f"""SELECT workplaces.name, history.studentID FROM history JOIN workplaces ON workplaces.id = history.workplaceID
+            WHERE workplaces.neighborhoodID = {neighborhood_id} AND workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL""")
+            self.settle(staff_day_id, data)
+
+        elif department_name != "Hepsi" and neighborhood_name == "Hepsi" and staff_item is not None and staff_day_item is not None:
+            department_id = self.connection.find(f"""SELECT id FROM departments WHERE name = "{self.ui.cmb_department.currentText()}" """)
+            staff_day_id = self.connection.find(f"""SELECT id FROM days WHERE name = "{staff_day_item.text()}" """)
+            data = self.connection.selector(f"""SELECT workplaces.name, history.studentID FROM history JOIN workplaces ON workplaces.id = history.workplaceID
+                        WHERE workplaces.departmentID = {department_id} AND workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL""")
+            self.settle(staff_day_id, data)
+
+        elif department_name != "Hepsi" and neighborhood_name != "Hepsi" and staff_item is not None and staff_day_item is not None:
+            neighborhood_id = self.connection.find(f"""SELECT id FROM neighborhoods WHERE name = "{self.ui.cmb_neighborhood.currentText()}" """)
+            department_id = self.connection.find(f"""SELECT id FROM departments WHERE name = "{self.ui.cmb_department.currentText()}" """)
+            staff_day_id = self.connection.find(f"""SELECT id FROM days WHERE name = "{staff_day_item.text()}" """)
+            data = self.connection.selector(f"""SELECT workplaces.name, history.studentID FROM history JOIN workplaces ON workplaces.id = history.workplaceID
+            WHERE workplaces.neighborhoodID = {neighborhood_id} AND workplaces.departmentID = {department_id}
+            AND workplaces.staffID IS NULL AND workplaces.dayID IS NULL AND history.leaving_date IS NULL""")
+            self.settle(staff_day_id, data)
+
+    def settle(self, p_staff_day_id, p_data):
+        staff_day_id = p_staff_day_id
+        data = p_data
+        all_days = {day[0] for day in self.connection.selector(f"""SELECT id FROM days""")}
+
+        wp_day_dict = {}
+        wp_names = {i[0] for i in data}
+        for i in wp_names:
+            wp_day_dict[i] = all_days
+
+        for wp, tc in data:
+            class_id = self.connection.find(f"""SELECT classID FROM students WHERE id_number = "{tc}" """)
+            wp_day_id_list = all_days
+            if class_id is not None:
+                wp_day_id_list = {day[0] for day in self.connection.selector(f"""SELECT dayID FROM classes_days WHERE classID = "{class_id}" """)}
+            wp_day_dict[wp] = wp_day_id_list.intersection(wp_day_dict[wp])
+
+        appropriate_wp_list = []
+        for wp, days in wp_day_dict.items():
+            if staff_day_id in days:
+                appropriate_wp_list.append(wp)
+
+        self.ui.lw_appropriate_wp.addItems(appropriate_wp_list)
 
     # workplace has to students. if you use the set statement, list widget(remaining workplace) show only one student even if workplace has more than one student
     def remaining_wp_loader(self):
@@ -166,39 +159,6 @@ class AddWorkplaceToStaff(QWidget):
         data = self.connection.selector(f"""SELECT workplaces.name FROM workplaces JOIN history ON history.workplaceID = workplaces.id 
                                             WHERE history.leaving_date IS NULL AND workplaces.staffID IS NULL AND workplaces.dayID IS NULL """)
         self.ui.lw_remaining_wp.addItems(get_list_general(data))
-
-    # get simple
-    @staticmethod
-    def intersection_day(p_data, p_staff_day):
-        data = p_data
-        staff_day = p_staff_day
-
-        worpla = set()
-        worpla_dict = dict()
-        for i in data:
-            worpla.add(i[0])
-        for i in worpla:
-            worpla_dict[i] = {}
-        for i in data:
-            worpla_dict[i[0]][i[1]] = []
-        for i in data:
-            worpla_dict[i[0]][i[1]].append(i[2])
-        day_dict = dict()
-        for i, j in worpla_dict.items():
-            day_dict[i] = []
-            for k, m in j.items():
-                day_dict[i].append(set(m))
-        intersection_dict = dict()
-        for i, j in day_dict.items():
-            temp_list = j[0]
-            for k in j:
-                temp_list = k.intersection(temp_list)
-            intersection_dict[i] = temp_list
-        return_list = list()
-        for i, j in intersection_dict.items():
-            if staff_day in j:
-                return_list.append(i)
-        return return_list
 
     def closeEvent(self, event):
         self.connection.db_closer()
