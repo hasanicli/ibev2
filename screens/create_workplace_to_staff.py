@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QAction
+from PyQt5.QtWidgets import QApplication, QWidget, QAction, QMessageBox
 import sys
 from screens.add_workplace_to_staff_python import Ui_Form
 from connectionDB import DbManager
@@ -25,6 +25,36 @@ class AddWorkplaceToStaff(QWidget):
         self.ui.lw_staff_day.currentRowChanged.connect(self.suitable_wp_loader)
         self.ui.btn_add.clicked.connect(self.adding)
         self.ui.btn_sub.clicked.connect(self.subbing)
+        self.ui.btn_neigh_staff.clicked.connect(self.show_wp_with_neighborhood)
+        self.ui.btn_staff_wp_num.clicked.connect(self.show_number_of_wp_for_staffs)
+
+    def show_wp_with_neighborhood(self):
+        neighborhood = self.ui.cmb_neighborhood.currentText()
+        if neighborhood != "Hepsi":
+            neighborhood_id = self.connection.find(f"""SELECT id FROM neighborhoods WHERE name = "{neighborhood}" """)
+            data = self.connection.selector(f"""SELECT name, departmentID, staffID FROM workplaces WHERE neighborhoodID={neighborhood_id} AND staffID IS NOT NULL AND dayID IS NOT NULL""")
+            info = ""
+            for wp_name, department_id, staff_id in data:
+                staff_name = [" ".join(name_surname) for name_surname in self.connection.selector(f"""SELECT name, surname FROM staffs WHERE id_number="{staff_id}" """)]
+                department_name = self.connection.find(f"""SELECT name FROM departments WHERE id={department_id} """)
+                info += wp_name + "--" + department_name + "--" + str(*staff_name) + "\n"
+            QMessageBox.information(self, "Bilgi", info)
+
+    def show_number_of_wp_for_staffs(self):
+        wp_list = []
+        for i in range(self.ui.lw_staff.count()):
+            staff_name = self.ui.lw_staff.item(i).text()[:-2]
+            staff_id = find_id_number(self.ui.lw_staff.item(i).text())
+            number = self.connection.find(f"""SELECT COUNT(name) FROM workplaces WHERE staffID="{staff_id}" """)
+            print(staff_id, staff_name)
+            wp_list.append(str(number) + "--" + staff_name + "\n")
+            # text += staff_name + "--" + str(number) + "\n"
+
+        wp_list.sort()
+        text = ""
+        for i in wp_list:
+            text += i
+        QMessageBox.information(self, "Bilgi", text)
 
     def first_load(self):
         self.department_loader()

@@ -971,7 +971,7 @@ QSizeGrip
        <item>
         <widget class="QLabel" name="label_11">
          <property name="text">
-          <string>Gün işletme sayısı</string>
+          <string>Gün işletme sayısı : </string>
          </property>
         </widget>
        </item>
@@ -1036,9 +1036,9 @@ QSizeGrip
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="lbl_wp_number">
          <property name="text">
-          <string>Öğretmen öğrenci sayısı</string>
+          <string>Öğretmen işletme sayısı : </string>
          </property>
         </widget>
        </item>
@@ -1083,9 +1083,9 @@ QSizeGrip
         <widget class="QListWidget" name="lw_appropriate_wp"/>
        </item>
        <item>
-        <widget class="QLabel" name="label_10">
+        <widget class="QLabel" name="lbl_wp_student_number">
          <property name="text">
-          <string>İşletme Öğrenci Sayısı</string>
+          <string>İşletme Öğrenci Sayısı : </string>
          </property>
         </widget>
        </item>
@@ -1161,7 +1161,7 @@ QSizeGrip
         <widget class="QListWidget" name="lw_assigned_wp"/>
        </item>
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="lbl_all_student_number">
          <property name="text">
           <string>Toplam öğrenci sayısı : </string>
          </property>

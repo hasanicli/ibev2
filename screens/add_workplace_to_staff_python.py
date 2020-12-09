@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/Erhan/Desktop/Koordinator/ibeV1/screens/add_workplace_to_staff.ui'
+# Form implementation generated from reading ui file 'C:/Users/Erhan/Desktop/Koordinator/ibeV2/screens/add_workplace_to_staff.ui'
 #
 # Created by: PyQt5 UI code generator 5.6
 #
@@ -976,9 +976,9 @@ class Ui_Form(object):
         self.lw_staff_day.setMaximumSize(QtCore.QSize(16777215, 100))
         self.lw_staff_day.setObjectName("lw_staff_day")
         self.verticalLayout_3.addWidget(self.lw_staff_day)
-        self.label_4 = QtWidgets.QLabel(Form)
-        self.label_4.setObjectName("label_4")
-        self.verticalLayout_3.addWidget(self.label_4)
+        self.lbl_wp_number = QtWidgets.QLabel(Form)
+        self.lbl_wp_number.setObjectName("lbl_wp_number")
+        self.verticalLayout_3.addWidget(self.lbl_wp_number)
         self.verticalLayout_3.setStretch(4, 18)
         self.horizontalLayout_2.addLayout(self.verticalLayout_3)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -1000,9 +1000,9 @@ class Ui_Form(object):
         self.lw_appropriate_wp = QtWidgets.QListWidget(Form)
         self.lw_appropriate_wp.setObjectName("lw_appropriate_wp")
         self.verticalLayout_5.addWidget(self.lw_appropriate_wp)
-        self.label_10 = QtWidgets.QLabel(Form)
-        self.label_10.setObjectName("label_10")
-        self.verticalLayout_5.addWidget(self.label_10)
+        self.lbl_wp_student_number = QtWidgets.QLabel(Form)
+        self.lbl_wp_student_number.setObjectName("lbl_wp_student_number")
+        self.verticalLayout_5.addWidget(self.lbl_wp_student_number)
         self.horizontalLayout_2.addLayout(self.verticalLayout_5)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
@@ -1027,9 +1027,9 @@ class Ui_Form(object):
         self.lw_assigned_wp = QtWidgets.QListWidget(Form)
         self.lw_assigned_wp.setObjectName("lw_assigned_wp")
         self.verticalLayout_2.addWidget(self.lw_assigned_wp)
-        self.label_5 = QtWidgets.QLabel(Form)
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout_2.addWidget(self.label_5)
+        self.lbl_all_student_number = QtWidgets.QLabel(Form)
+        self.lbl_all_student_number.setObjectName("lbl_all_student_number")
+        self.verticalLayout_2.addWidget(self.lbl_all_student_number)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
 
@@ -1040,15 +1040,15 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_9.setText(_translate("Form", "Ataması yapılmamış işletmeler"))
-        self.label_11.setText(_translate("Form", "Gün işletme sayısı"))
+        self.label_11.setText(_translate("Form", "Gün işletme sayısı : "))
         self.label_2.setText(_translate("Form", "Öğretmenler"))
         self.btn_staff_wp_num.setText(_translate("Form", "Öğretmen İşletme Sayıları"))
-        self.label_4.setText(_translate("Form", "Öğretmen öğrenci sayısı"))
+        self.lbl_wp_number.setText(_translate("Form", "Öğretmen işletme sayısı : "))
         self.label_8.setText(_translate("Form", "Müsait İşletmeler"))
         self.btn_neigh_staff.setText(_translate("Form", "Mahalle Öğretmenleri"))
-        self.label_10.setText(_translate("Form", "İşletme Öğrenci Sayısı"))
+        self.lbl_wp_student_number.setText(_translate("Form", "İşletme Öğrenci Sayısı : "))
         self.btn_add.setText(_translate("Form", "Ekle>>>"))
         self.btn_sub.setText(_translate("Form", "<<<Çıkar"))
         self.label_3.setText(_translate("Form", "Atanmış işletmeler"))
-        self.label_5.setText(_translate("Form", "Toplam öğrenci sayısı : "))
+        self.lbl_all_student_number.setText(_translate("Form", "Toplam öğrenci sayısı : "))
 
